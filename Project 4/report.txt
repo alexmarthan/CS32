@@ -1,0 +1,61 @@
+Alexandre Marthan
+Bruin ID: 505719814
+
+
+1. A description of your algorithms and data structures, and why you made the choices you did.
+
+For my implementation, I chose to use a hash table because it provides efficient lookup and insertion operations. The hash table is represented by a vector of lists of strings called 'm_words'. Each element in the vector corresponds to a key obtained from my hash function, and the associated list contains all the words that hash to that key.
+
+To optimize lookups, I designed my hash function to hash the sorted version of a word. This means that all permutations of a word will have the same key. When inserting a word, I sort it and use the sorted version as the key. Then, I append the unsorted word to the end of the list associated with that key. This approach allows me to quickly find the list of strings associated with a given word during lookups.
+
+During a lookup, I take the inputted string and sort it. Using the sorted string, I compute the key using my hash function and retrieve the list of strings associated with that key. I then iterate through the list, sorting each word and checking if it matches the sorted inputted string. If a match is found, I pass the original unsorted inputted string to the provided callback function.
+
+This implementation ensures efficient lookups by utilizing a hash table and sorting the words for key generation. 
+
+2. Pseudocode for non-trivial algorithms
+
+My hash function:
+
+size_t DictionaryImpl::myHashFunc(const string& word) const:
+
+	sort word
+	hash the sorted word using stl's hash
+	return hash % nbofbuckets
+
+
+My insertion algorithm:
+
+void DictionaryImpl::insert(string word):
+
+	remove word's non-letter characters
+
+	if word is not an empty string
+		hash the word
+		append word to the list associated to the hashed word
+		
+
+My lookup algorithm:
+
+void DictionaryImpl::lookup(string letters, void callback(string)) const:
+
+	if callback is nullptr, return
+	
+	remove word's non-letter characters
+	
+	if letters is an empty string, return
+
+	sort letters alphabetically
+	
+	if sorted letters is a key in hashTable, iterate through the list at that key
+		repeatedly:
+			sort the element of your list
+			if sorted element of your list is equal to sorted letters
+				callback unsorted element (callback function is a printing function)
+		
+
+
+
+
+3. A note about any known bugs, serious inefficiencies, or notable problems you had
+
+My first instinct when presented with the problem of optimising performance of the program was to create my own hashTable class instead of just creating a vector<list<string>> object in the DictionaryImpl class. I thus created the whole implementation of a hash table myself, with my own hash function, resizing functionality (and thus different insertion and hash function algorithms when resizing). This took me a while and it was always too slow - when I'd optimized it maximally, I only managed to get it to perform at 2000ms on the g32 curl command tester provided. I finally understood that I could create a vector of lists of strings as a substitute for my hashTable class and translated my code into this implementation and got 14ms on the curl command tester!
