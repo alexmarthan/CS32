@@ -1,0 +1,151 @@
+
+Description of the design of your doubly-linked list implementation:
+
+My Sequence class is a doubly linked list with a head pointer and a tail pointer. The head pointer points to the first node in the list and the tail pointer points to the last node in the list. The list is not circular, and there is no dummy node. My nodes each have data of type ItemType, a prev pointer and a next pointer. The prev pointer points to the previous node in the list, and the next pointer points to the next node in the list. The first node's prev pointer and the last node's next pointer are set to nullptr.
+
+Pseudocode for non-trivial algorithms (e.g., Sequence::remove and subsequence):
+
+
+Sequence::erase
+	given a position 
+	delete node at that position
+
+
+Sequence::remove
+
+	Repeatedly:
+		erase items in the list that hold a certain value
+	Return the number of items erased
+
+
+subsequence
+
+	Accept two parameters of Sequence data type seq1 and seq2.
+	Find the first member of seq2 in seq1 and get its position.
+	If seq1 doesn't contain the first element of seq2, return -1.
+	While the first member of seq2 can still be found in the new sequence:
+		Find the position of the first member of seq2 in the new sequence.
+		Check if the next members of the new sequence match the members of seq2.
+		If they do, return the position of the first member of seq2 in seq1.
+		If they don't, remove the first member of seq2 from the new sequence and try again.
+		If seq2 is not found in seq1, return -1.
+
+concatreverse
+
+	Accept three parameters of Sequence data type: seq1, seq2, and result.
+	Clear the result sequence.
+	Copy seq2 into result.
+	For each element in seq1, do the following:
+   		Get the value of the element.
+   		Insert the value at the end of the result sequence.
+	Create a temporary sequence called temp.
+	For each element in the result sequence
+		Get the value of the element from the end of the result sequence.
+		Insert the value at the beginning of the temp sequence.
+	Swap the contents of the temp sequence and the result sequence.
+
+
+List of test cases:
+
+
+Testing the remove function, and by extension the erase function // with ItemType std::string
+
+	Sequence s;
+        s.insert(0, "a");
+        s.insert(1, "b");
+        s.insert(2, "d");
+        s.insert(3, "b");
+        s.insert(4, "c");
+        assert(s.remove("b") == 2);
+        assert(s.size() == 3);
+        string y;
+        assert(s.get(0, y)  &&  y == "a");
+        assert(s.get(1, y)  &&  y == "d");
+        assert(s.get(2, y)  &&  y == "c");
+
+Testing swap (if the sizes are correct and the values are correct) // with ItemType string
+
+    Sequence s1;
+        s1.insert(0, "cool");
+        s1.insert(0, "hot");
+        Sequence s2;
+        s2.insert(0, "warm");
+        s1.swap(s2);
+        assert(s1.size() == 1  &&  s1.find("warm") == 0  &&  s2.size() == 2  &&
+                    s2.find("hot") == 0  &&  s2.find("cool") == 1);
+
+
+Testing the insertion of an empty string // with ItemType std::string
+    Sequence s;
+    s.insert(0, "caine");
+    s.insert(1, "abel");
+    s.insert(2, "");
+    s.insert(3, "jesus");
+    assert(s.find("") == 2);
+    s.remove("caine");
+    assert(s.size() == 3  &&  s.find("abel") == 0  &&  s.find("") == 1  &&
+                s.find("jesus") == 2);
+
+Testing the empty function, and the out of bounds of the find function // with ItemType int
+
+	Sequence s;
+        assert(s.empty());
+        assert(s.find(2) == -1);
+        assert(s.insert(2) == 0);
+        assert(s.size() == 1  &&  s.find(2) == 0);
+
+Testing the assignment operator, and by extension the copy constructor // with ItemType std::string
+
+    Sequence s;
+    s.insert(0,"a");
+    s.insert(1,"b");
+    s.insert(2,"c");
+    s.insert(3,"d");
+    s.insert(4,"e");
+    
+    Sequence b = s;
+    assert(b.find("a") == 0 );
+    assert(b.find("b") == 1 );
+    assert(b.find("c") == 2 );
+    assert(b.find("d") == 3 );
+    assert(b.find("e") == 4 );
+    assert(b.find("y") == -1 );
+
+
+Testing subsequence // with ItemType int
+
+    Sequence s;
+    s.insert(0,1);
+    s.insert(1,2);
+    s.insert(2,3);
+    s.insert(3,4);
+    s.insert(4,5);
+    
+    Sequence s2;
+    s2.insert(0,1);
+    s2.insert(1,2);
+    s2.insert(2,3);
+    s2.insert(3,4);
+    s2.insert(4,6);
+    s2.insert(5,1);
+    s2.insert(6,2);
+    s2.insert(7,3);
+    s2.insert(8,4);
+    s2.insert(9,5);
+    
+    assert(subsequence(s2, s) == 5);
+
+Testing the concat reverse function // with ItemType std::string
+
+    Sequence par, rot;
+    par.insert(0,"p");
+    par.insert(1,"a");
+    par.insert(2,"r");
+
+    rot.insert(0,"r");
+    rot.insert(1,"o");
+    rot.insert(2,"t");
+
+    Sequence bay = rot;
+
+    concatReverse(par, rot, bay);
