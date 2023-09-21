@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "FD512836-A262-4201-8B28-165795DC6F51"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C4041BD2-ACA2-4EDD-BC53-A283FEB40FA3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Homework1/testnewSequence.cpp"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "18"
+            endingLineNumber = "18"
+            landmarkName = "main()"
+            landmarkType = "9">
+            <Locations>
+               <Location
+                  uuid = "C4041BD2-ACA2-4EDD-BC53-A283FEB40FA3 - 96d16c66c7e06117"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "main"
+                  moduleName = "Homework1"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/xelaxela/Desktop/UCLA/SOPHOMORE%20SPRING/CS32/Homework1/Homework1/testnewSequence.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "22"
+                  endingLineNumber = "22"
+                  offsetFromSymbolStart = "274">
+               </Location>
+               <Location
+                  uuid = "C4041BD2-ACA2-4EDD-BC53-A283FEB40FA3 - 96d16c66c7e0619b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "main"
+                  moduleName = "Homework1"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/xelaxela/Desktop/UCLA/SOPHOMORE%20SPRING/CS32/Homework1/Homework1/testnewSequence.cpp"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "18"
+                  endingLineNumber = "18"
+                  offsetFromSymbolStart = "277">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
