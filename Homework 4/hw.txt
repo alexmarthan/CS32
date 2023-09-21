@@ -1,0 +1,22 @@
+Alexandre Marthan
+505719814
+
+
+
+******ISSUE WITH MY LIST.CPP -> PRINTS OUT AN EMPTY LINE BEFORE PRINTING OUT THE REST************
+
+1)e. When the index k equals 2, the vector is resized by adding 5 more elements with the value MAGIC. This causes the original vector to be reallocated, and all of its elements are copied to a new memory location. Because the iterator p still points to the old memory location, it becomes invalid when the reallocation happens. After the reallocation, the iterator p is no longer valid, and using it to access the elements of the vector causes undefined behavior.
+
+3) The implementation of the one-argument form of Sequence<Coord>::insert function contains a comparison of two objects of type Coord. However we have not defined what the comparison operator does when comparing two objects of Coord type. This causes a compilation error. In order to fix this, we need to overload the '>' operator for the Coord type.
+
+4)b. If we only had a one-parameter listAll function, we would not have a way to keep track of the path to each menu item. I wouldn't be able to solve the problem because my recursive calls would not be able to keep track of the previous directories.
+
+5)a. The time complexity of this algorithm is O(N^3). Starting at the innermost loop, (k goes from 0 to N), and thus performs the operations within this loop N times. The operations within the loop are a time constant, so the total time complexity of this loop is O(N) as we only include the highest order of N. This for loop is contained within another for loop (j goes from 0 to N), so we repeat N times what's already been done in the innermost loop. We thus have a time complexity of O(N)*O(N) = O(N^2). Finally, this loop is contained within another loop (i goes from 0 to N), so we multiply the previous time complexity by N and get a total time complexity of O(N^3).
+
+5)b. The time complexity of this algorithm is still O(N^3). The innermost loop is the same as in the previous algorithm, so it still has a time complexity of O(N). The middle loop iterates from (0 to i) and does so N times as it is contained within the outermost loop, so we get O(N(N-1)/2) = O(N^2). Multiplying this with the innermost loop, we get a total time complexity of O(N)*O(N^2) = O(N^3).
+
+
+6)a. The time complexity of this algorithm is O(N^2). We have two for loops that contain calls to the get and insert functions. The get and insert functions are both of time complexity O(N) as they each contain a for loop that iterates n times. So, we get O(N) + O(N), which is the same as O(N) within each for loop of the concatReverse function. The for loop that these are within iterates n times. So multiplying time complexities we get, O(N^2) for each for loop. Adding both for loops together we get O(N^2) + O(N^2) which is just O(N^2).The swap function is a time constant so adding it doesn't influence the resulting time complexity.
+
+
+6)b. The time complexity of this algorithm is O(N). We have two for loops which each contain a call to the insertBefore function. The insertBefore function has a time complexity of O(1), and the for loop it is contained in iterates n times. So, the time complexity of each for loop is O(N). Adding both for loops together we get a time complexity of O(N). The swap function is a time constant so adding it doesn't influence the resulting time complexity. This algorithm is better than the previous one.
