@@ -1,0 +1,293 @@
+
+Description of the design of your classes. We know what the public interfaces are, but what about your implementations: What are the major data structures that you use? What private member functions or helper non-member functions did you define for what purpose?
+
+BOARD:
+
+To keep track of the state of my game, I used two vectors of ints, each representing the holes on a side. Additionally, I created a private member function bool isValidHole which checks if the hole inputted is valid. I also created a private member function void incrementPot, which takes in a value and adds that value to the pot. For the sow function, I created many private helper functions for all the different algorithms as the algorithms differ depending on the current side we are on versus the side we started on. These functions exist to help readability of the code. These functions are South4South, North4North,  North4South, South4North, and SwitchNorthToSouth, SwitchSouthtoNorth. The first 4 are the algorithms representing iterating through the holes depending on what side we are currently on, and the side we started on. The last 2 are just short algorithms that switch the current side we are on to the other side.
+
+
+GAME:
+My Game has two pointers to Players because a game has two players, and a Board object to keep track of the board. I created a private helper function captureMove that takes care of the capture feature in the move function. This was implemented for code readability. 
+
+PLAYER:
+My SmartPlayer class has three private helper functions. These all serve to help the chooseMove function. First, the evaluate function serves to evaluate how good a position is for the south player, the chooseMove function uses the evaluate function to determine which hole to pick based on future evaluations. Second, the moveSimulator function simulates a move so that we can compare different simulations outcomes for the player - it takes care of the capture feature, and of the repeated turns when landing on your own pot. Third, the miniMax function is a recursive algorithm which does all the heavy lifting for chooseMove. Its role is to keep running simulations of the future (by choosing holes) while we don't exceed a search depth or the time constraint or simulate the end of the game.
+
+
+PSEUDO CODE for non trivial algorithms:
+
+
+bool Board::sow(Side s, int hole, Side& endSide, int& endHole):
+
+	if hole is not valid return false
+	if chosen hole has no beans return false
+	if s == south
+		while there are still beans to distribute
+			if current hole is pot
+				change current side to north, change current hole to the last index in north vector
+			if current side is south
+				if current hole is not the south pot or the hole preceding it
+					increment current hole, add a bean to hole
+				else 
+					set current hole to 0, add a bean to the hole
+
+			else (current side is north)
+				if current hole is not the north pot
+					decrement current hole, add a bean to hole
+				else skip north pot
+			decrement number of beans to distribute
+	else 
+        	while there are still beans to distribute
+			if current hole is pot
+				switch sides
+			if current side is south
+				if current hole is not the south pot or the hole preceding it
+					increment current hole
+					add a bean to hole
+				else 
+					skip pot
+					switch sides
+			else
+				if current hole is not pot
+					decrement current hole
+					add a bean to hole
+			decrement number of beans to distribute
+
+    if current hole is a pot, set current hole to 0
+
+    return true
+
+
+
+void SmartPlayer::miniMax(const Board& b, Side s, int& bestHole, int& value, int searchDepth):
+
+
+	if search depth exceeds 3 or there are no more beans in play
+		besthole is -1
+		value is equal to the value of this position 
+		return
+	if side is north then we set value to -inf, otherwise we set value to the +inf
+	for in the holes vector of side s
+		if there are no beans in this hole
+			increment current
+			continue to next item in loop
+		create a temporary board
+		if the chosen hole is an incomplete move 
+			choose another move
+		else 
+			opponent chooses move
+		if loop iteration (i) is equal to current
+			set value to to value returned by recursive call
+			set bestHole to loop iteration (i)
+		if south's move and newValue is a maximum
+			set max to newValue
+			set bestHole to i
+		is norths move and newValue is a minimum
+			set min to newValue
+			set bestHole to i
+
+
+
+bool Game::move(Side s):
+
+    If it's SOUTH player's turn Then
+        If SOUTH player is interactive and NORTH player is not interactive Then
+            Show the game board
+
+        Let SOUTH player choose a hole to play
+        
+        If SOUTH player is not interactive Then
+            Display the chosen hole
+        
+        Perform the sow operation on the chosen hole
+        
+        If the last bean lands in the pot and SOUTH player still has beans on the board Then
+            Inform that SOUTH player gets another turn
+        
+        If the last bean lands in a hole on SOUTH player's side Then
+            Perform a capture move if possible
+    
+    Else (It's NORTH player's turn)
+        If NORTH player is interactive and SOUTH player is not interactive Then
+            Show the game board
+
+        Let NORTH player choose a hole to play
+        
+        If NORTH player is not interactive Then
+            Display the chosen hole
+        
+        Perform the sow operation on the chosen hole
+        
+        If the last seed lands in the pot and NORTH player still has seeds on the board Then
+            Inform that NORTH player gets another turn
+        
+        If the last seed lands in a hole on NORTH player's side Then
+            Perform a capture move if possible
+    
+    Check the game status to determine if it's over and if there's a winner
+    
+    If the game is over Then
+        Display the final game board
+        Move all remaining beans from the opponent's holes to their pot
+        
+        Return False (indicating the end of the game)
+    
+    Return True (indicating the game is still ongoing)
+
+
+
+WHAT HEURISTIC DID I USE:
+
+I used "the number of beans in South's pot minus the number of beans in North's pot" as a heuristic.
+
+
+LIST OF BUGS OR NOTABLE PROBLEMS I HAD
+
+
+I initially used one vector for my board class, this was a lot more complex and meant that my sow function did not work when we went back to the original side after having iterated through the opponent's side. I changed my implementation to make there be a north vector and a south vector, this simplified the sow function.
+
+My SmartPlayer chooseMove function was not efficient for a while (it would lose to my badPlayer regularly). One of the issues that function had was that I didn't properly simulate a move (I hadn't yet created the helper function makeMove) I was thus not simulating the whole move (checking for a capture or another turn).
+
+
+LIST OF TEST CASES:
+
+FOR BOARD:
+
+int main() {
+    // Test case 1: holes()
+    Board board1(6, 4);
+    int numHoles = board1.holes();
+    std::cout << "Number of holes: " << numHoles << std::endl;
+
+    // Test case 2: beans()
+    Board board2(6, 4);
+    board2.setBeans(Side::NORTH, 3, 10);
+    int numBeans = board2.beans(Side::NORTH, 3);
+    std::cout << "Beans in hole 3 on the north side: " << numBeans << std::endl;
+
+    // Test case 3: beansInPlay()
+    Board board3(6, 4);
+    board3.setBeans(Side::SOUTH, 1, 3);
+    board3.setBeans(Side::NORTH, 4, 5);
+    int beansInPlaySouth = board3.beansInPlay(Side::SOUTH);
+    int beansInPlayNorth = board3.beansInPlay(Side::NORTH);
+    std::cout << "Beans in play on the south side: " << beansInPlaySouth << std::endl;
+    std::cout << "Beans in play on the north side: " << beansInPlayNorth << std::endl;
+
+    // Test case 4: totalBeans()
+    Board board4(6, 4);
+    board4.setBeans(Side::SOUTH, 2, 2);
+    board4.setBeans(Side::NORTH, 5, 3);
+    int totalBeans = board4.totalBeans();
+    std::cout << "Total number of beans: " << totalBeans << std::endl;
+
+    // Test case 5: sow()
+    Board board5(6, 4);
+    Side endSide;
+    int endHole;
+    bool result = board5.sow(Side::SOUTH, 3, endSide, endHole);
+    std::cout << "Sow result: " << (result ? "Success" : "Failure") << std::endl;
+    std::cout << "End side: " << (endSide == Side::NORTH ? "North" : "South") << std::endl;
+    std::cout << "End hole: " << endHole << std::endl;
+
+    // Test case 6: moveToPot()
+    Board board6(6, 4);
+    board6.setBeans(Side::NORTH, 2, 6);
+    bool moveResult = board6.moveToPot(Side::NORTH, 2, Side::NORTH);
+    std::cout << "Move to pot result: " << (moveResult ? "Success" : "Failure") << std::endl;
+
+    // Test case 7: setBeans()
+    Board board7(6, 4);
+    board7.setBeans(Side::SOUTH, 4, 7);
+    int updatedBeans = board7.beans(Side::SOUTH, 4);
+    std::cout << "Updated beans in hole 4 on the south side: " << updatedBeans << std::endl;
+
+    return 0;
+}
+
+
+FOR GAME:
+
+int main() {
+    // Create players
+    Player* southPlayer = new HumanPlayer("Alice");
+    Player* northPlayer = new ComputerPlayer("Bob");
+
+    // Create a board
+    Board board(6, 4);
+
+    // Create a game
+    Game game(board, southPlayer, northPlayer);
+
+    // Test case 1: display()
+    game.display();
+
+    // Test case 2: beans()
+    int numBeans = game.beans(Side::SOUTH, 3);
+    std::cout << "Beans in hole 3 on the south side: " << numBeans << std::endl;
+
+    // Test case 3: move()
+    bool moveResult = game.move(Side::SOUTH);
+    std::cout << "Move result: " << (moveResult ? "Success" : "Failure") << std::endl;
+
+    // Test case 4: status()
+    bool gameOver, hasWinner;
+    Side winner;
+    game.status(gameOver, hasWinner, winner);
+    std::cout << "Game over: " << (gameOver ? "Yes" : "No") << std::endl;
+    std::cout << "Has winner: " << (hasWinner ? "Yes" : "No") << std::endl;
+    std::cout << "Winner: " << (winner == Side::SOUTH ? "South" : "North") << std::endl;
+
+    // Test case 5: play()
+    game.play();
+
+    // Clean up
+    delete southPlayer;
+    delete northPlayer;
+
+    return 0;
+}
+
+FOR PLAYER:
+
+
+// Test Case for HumanPlayer Class
+void testHumanPlayer() {
+    Board board(6, 4);
+    HumanPlayer humanPlayer("Alice");
+    int chosenMove = humanPlayer.chooseMove(board, SOUTH);
+    // Enter a valid move (e.g., 3) when prompted
+    assert(chosenMove == 3);
+    bool isInteractive = humanPlayer.isInteractive();
+    assert(isInteractive);
+}
+
+// Test Case for BadPlayer Class
+void testBadPlayer() {
+    Board board(6, 4);
+    BadPlayer badPlayer("Bob");
+    int chosenMove = badPlayer.chooseMove(board, SOUTH);
+    assert(chosenMove >= 1 && chosenMove <= 6); // The chosen move should be a valid hole index
+}
+
+// Test Case for SmartPlayer Class
+void testSmartPlayer() {
+    Board board(6, 4);
+    SmartPlayer smartPlayer("Charlie");
+    int chosenMove = smartPlayer.chooseMove(board, SOUTH);
+    assert(chosenMove >= 1 && chosenMove <= 6); // The chosen move should be a valid hole index
+}
+
+int main() {
+    testHumanPlayer();
+    testBadPlayer();
+    testSmartPlayer();
+
+    return 0;
+}
+
+
+
+
+
+
+
